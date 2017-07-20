@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 plt.style.use("ggplot")
 import time
+import math
 
 import seaborn as sns
 df=pd.read_csv("data.csv",header=0)
@@ -168,7 +169,7 @@ def class_model_gridsearchCV(model,param_grid,x,y):
     clf=GridSearchCV(model,param_grid,cv=10,scoring='accuracy')
     clf.fit(x,y)
     print(clf.best_params_)
-    print(clf.best_score_)
+    
 
 
 

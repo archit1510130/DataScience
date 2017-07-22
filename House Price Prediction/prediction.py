@@ -141,13 +141,19 @@ def LASSOMODEL():
     #print(lasso_preds)
     solution=pd.DataFrame({"id":test.Id,"SalePrice":lasso_preds})
     solution.to_csv('answerfinal.csv',index=False)
-LASSOMODEL()    
+    
+#LASSOMODEL()    
 
 
-# so by lasso we got .1200 accuracy ..........
+# so by lasso we got .1200 accuracy ..........its pretty good bt now trying with the xgboost model
 
 
-
+#XGBOOST:
+    # BOOSTING :
+        #XGBBOST model is based on boosting ....boosting is sequential process ....in which first 
+         #we we apply the algorithm ontrain data and those who has large errors we build a another model
+         # then apply the same algorithm for that and in the en final result is ensembles of all of them:
+             
 
 
 

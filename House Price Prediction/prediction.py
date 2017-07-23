@@ -155,12 +155,49 @@ def LASSOMODEL():
          # then apply the same algorithm for that and in the en final result is ensembles of all of them:
              
 
+import xgboost as xgb
+import math
+from sklearn.model_selection import GridSearchCV
 
 
 
+#def grid_search()
+
+# these value calculated by the performing the cross validation and with gridserach
+def grid_search(model,param_grid,x,y):
+    clf=GridSearchCV(model,param_grid,cv=10,scoring="neg_mean_squared_error")
+    clf.fit(x,y)
+    print(clf.best_params_)
+    print(math.sqrt(-clf.best_score_))
+
+
+param_grid={
+        "max_depth":range(3,6),
+        "min_child_weight":[1.3,1.4,1.6],
+        'subsample':[i/100.0 for i in range(75,90,5)],
+        'colsample_bytree':[i/100.0 for i in range(75,90,5)],
+        'reg_alpha':[0, 0.001, 0.005, 0.01, 0.05]
+        }
 
 
 
+regr = xgb.XGBRegressor(
+                 colsample_bytree=0.2,
+                 gamma=0.0,
+                 learning_rate=0.01,
+                 max_depth=4,
+                 min_child_weight=1.3,
+                 n_estimators=7200,                                                                  
+                 reg_alpha=0.9,
+                 reg_lambda=0.8,
+                 subsample=0.2,
+                 seed=43,
+                 silent=1)
+
+
+#print(rmse_cv(regr).mean())
+xg=xgb.XGBRegressor()
+grid_search(xg,param_grid,X_train,y)
 
 
 

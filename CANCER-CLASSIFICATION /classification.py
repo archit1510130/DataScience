@@ -157,67 +157,52 @@ def drawPlots(model, X_train, X_test, y_train, y_test, wintitle='Figure 1'):
 
   print ("Max 2D Score: ", max_2d_score)
   #fig.set_tight_layout(True)
-
-
-
-
-
-
-
-
-def class_model_gridsearchCV(model,param_grid,x,y):
-    clf=GridSearchCV(model,param_grid,cv=10,scoring='accuracy')
-    clf.fit(x,y)
-    print(clf.best_params_)
-    
-
-
-
-
-
-def classification_model(model,x,y):
-    scores=cross_val_score(model,x,y,cv=10,scoring='accuracy')
-    print(scores.mean())
-    print(scores)
-    if str(model)==str(KNeighborsClassifier(n_neighbors=5)):
-        k_range=list(range(1,30))
-        param_grid={'n_neighbors':k_range}
-        class_model_gridsearchCV(model,param_grid,x,y)    
-    
-    
-    
-
-
-
+        
 X=df[pred_var]
 y=df.diagnosis
-X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=.3,random_state=7)
 
+def model_selection(x,y):
+    result={}
+    parameter={}
+    
+    
+    def class_model_gridsearchCV(model,param_grid):
+        clf=GridSearchCV(model,param_grid,cv=10,scoring='accuracy')
+        clf.fit(x,y)
+        param=[clf.best_params_,clf.best_score_]
+        return param
+    
+    
+    def classification_model(model):
+        scores=cross_val_score(model,x,y,cv=10,scoring='accuracy')
+        score=[scores.mean()]
+        return score
+    
+    
+    clf=KNeighborsClassifier(n_neighbors=3)
+    result["Kneighbors"]=classification_model(clf)
+    param_grid={"n_neighbors":range(3,8)}
+    parameter["kneighors"]=class_model_gridsearchCV(clf,param_grid)
+    
+    clf=RandomForestClassifier(n_estimators=101)
+    param_grid={"n_estimators":range(101,108)}
+    result["RandomForest"]=classification_model(clf)
+    parameter["RANDOMFOREST"]=class_model_gridsearchCV(clf,param_grid)
+    
+    clf= svm.SVC()
+    result["SVM"]=classification_model(clf)
+    
+    
+    result=pd.DataFrame.from_dict(result,orient='index')
+    result.columns=["score"]
+    parameter=pd.DataFrame.from_dict(parameter,orient='index')
+    parameter.columns=["parametr","score"]
+    print(result)
+    print(parameter)
 
-
-# so now for knn
-knn=KNeighborsClassifier(n_neighbors=5)
-#drawPlots(knn, X_train, X_test, y_train, y_test, 'KNeighbors')
-
-
-
-dc = DecisionTreeClassifier()
-
-
-
-
-rndm=RandomForestClassifier(n_estimators=100)
-
-
-
-svc = svm.SVC()
-classification_model(svc,X,y)
-
-
-lr=LogisticRegression()
-classification_model(lr,X,y)
-
-
+    
+    
+model_selection(X,y)
 
 
 

@@ -175,8 +175,8 @@ param_grid={
         "max_depth":range(3,6),
         "min_child_weight":[1.3,1.4,1.6],
         'subsample':[i/100.0 for i in range(75,90,5)],
-        'colsample_bytree':[i/100.0 for i in range(75,90,5)],
-        'reg_alpha':[0, 0.001, 0.005, 0.01, 0.05]
+        #'colsample_bytree':[i/100.0 for i in range(75,90,5)],
+        #'reg_alpha':[0, 0.001, 0.005, 0.01, 0.05]
         }
 
 

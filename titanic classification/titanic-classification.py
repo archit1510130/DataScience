@@ -28,9 +28,6 @@ df.drop(dropcolumns,axis=1,inplace=True)
 
 
 
-
-
-
 pred_col=['Pclass','Sex','Age','SibSp','Parch']
 # one thing or
 # as we can see SibSp and parch both are telling the same thing 
@@ -43,7 +40,7 @@ pred_col=['Pclass','Sex','Age','pariwar']
 
 # first on pcclass
 
-fig,(axis1,axis2)=plt.subplots(1,2,figsize=(10,5))
+#fig,(axis1,axis2)=plt.subplots(1,2,figsize=(10,5))
 #sns.countplot(x="Pclass",data=df,ax=axis1)
 #sns.factorplot("Pclass",'Survived',data=df)
 
@@ -106,45 +103,74 @@ pred_col=["pariwar","class1","class2","child","female","bht chote age","chote ag
 x=df[pred_col]
 y=df.Survived
 
-
-
-
-def class_model_gridsearchCV(model,param_grid,x,y):
-    clf=GridSearchCV(model,param_grid,cv=10,scoring='accuracy')
-    clf.fit(x,y)
-    print(clf.best_params_)
-    print(clf.best_score_)
-    
-def classification_model(x,y):
+def model_selection(x,y):
     result={}
-    def test_model(clf):
-        scores=cross_val_score(clf,x,y,cv=10,scoring='accuracy')
-        return scores.max()
+    parameter={}
+    
+    
+    def class_model_gridsearchCV(model,param_grid):
+        clf=GridSearchCV(model,param_grid,cv=10,scoring='accuracy')
+        clf.fit(x,y)
+        param=[clf.best_params_,clf.best_score_]
+        return param
+    
+    
+    def classification_model(model):
+        scores=cross_val_score(model,x,y,cv=10,scoring='accuracy')
+        score=[scores.mean()]
+        return score
+    
+    
     clf=KNeighborsClassifier(n_neighbors=3)
-    result["KNEIGHBORS"]=test_model(clf)
+    result["Kneighbors"]=classification_model(clf)
+    param_grid={"n_neighbors":range(3,16)}
+    parameter["kneighors"]=class_model_gridsearchCV(clf,param_grid)
     
-    clf=RandomForestClassifier(n_estimators=100)
-    result["RANDOMFOREST"]=test_model(clf)
+    clf=RandomForestClassifier(n_estimators=101)
+    param_grid={"n_estimators":range(90,120)}
+    result["RandomForest"]=classification_model(clf)
+    parameter["RANDOMFOREST"]=class_model_gridsearchCV(clf,param_grid)
     
-    clf=DecisionTreeClassifier()
-    result["DECISIONTREE"]=test_model(clf)
-        
+    
+    clf= svm.SVC()
+    result["SVM"]=classification_model(clf)
+    
+    
     result=pd.DataFrame.from_dict(result,orient='index')
-    result.columns=["accuracy"]
-    result=result.sort(columns=["accuracy"],ascending=False)
-    #result.plot(kind="bar")
+    result.columns=["score"]
     
-    print(result.head(3))
+    parameter=pd.DataFrame.from_dict(parameter,orient='index')
+    parameter.columns=["parametr","score"]
+    
+    print(result)
+    print(parameter)
 
 
-rndm=RandomForestClassifier(n_estimators=100)
-knn=KNeighborsClassifier(n_neighbors=3)
-dc = DecisionTreeClassifier()
-lr=LogisticRegression()
-sv=svm.SVC()
+#model_selection(x,y)
+
+# by this we got same almost same accuracy by all d models
 
 
-classification_model(x,y)
+
+
+
+
+
+# running the XGBOOST MODEL '
+import xgboost as xgb
+
+def classification_model(model):
+        scores=cross_val_score(model,x,y,cv=10,scoring='accuracy')
+        score=scores.mean()
+        print(score)
+        
+
+
+
+import xgboost as xgb
+xg=xgb.XGBClassifier()
+classification_model(xg)
+
 
 
 

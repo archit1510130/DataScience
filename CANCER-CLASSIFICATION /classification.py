@@ -189,14 +189,17 @@ def model_selection(x,y):
     result["RandomForest"]=classification_model(clf)
     parameter["RANDOMFOREST"]=class_model_gridsearchCV(clf,param_grid)
     
+    
     clf= svm.SVC()
     result["SVM"]=classification_model(clf)
     
     
     result=pd.DataFrame.from_dict(result,orient='index')
     result.columns=["score"]
+    
     parameter=pd.DataFrame.from_dict(parameter,orient='index')
     parameter.columns=["parametr","score"]
+    
     print(result)
     print(parameter)
 
